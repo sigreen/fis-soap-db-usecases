@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd    ">
+
+	<cxf:cxfEndpoint
+		address="http://0.0.0.0:9393/ws/EsbCustomerInformationManagement.CustomerAccount.CustomerAccount_2_0/EsbCustomerInformationManagement_CustomerAccount_CustomerAccount_Port"
+		id="getCustomerAccountEndpoint"
+		serviceClass="com.videotron.esbcustomerinformationmanagement.customeraccount._2_0.CustomerAccountPortType"
+		wsdlURL="META-INF/wsdl/CustomerAccount_2_0.wsdl">
+		<cxf:properties>
+			<entry key="schema-validation-enabled" value="true" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+
+	<bean
+		class="org.mycompany.GetCustomerAccountProcessor"
+		id="getCustomerAccountProcessor" />
+
+	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+		<route id="cxf-listener">
+			<!-- route starts from the cxf webservice in POJO mode -->
+			<from id="getCustomerAccountListener" uri="cxf:bean:getCustomerAccountEndpoint" />
+			<process id="getCustomerAccountProcess" ref="getCustomerAccountProcessor" />
+			<log message="HEADERS: [${headers}]"/>
+			</route>
+	</camelContext>
+</beans>
